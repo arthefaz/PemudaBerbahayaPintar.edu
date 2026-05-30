@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,6 +17,17 @@ export default function CreateModulPage() {
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateAI = async () => {
+    setIsGenerating(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setTitle('Sejarah Sumpah Pemuda: Tonggak Persatuan Bangsa');
+    setDescription('Modul interaktif yang membahas latar belakang, proses, dan makna penting Sumpah Pemuda 1928 bagi generasi sekarang.');
+    setContent('# Sejarah Sumpah Pemuda\n\nSumpah Pemuda adalah satu tonggak utama dalam sejarah pergerakan kemerdekaan Indonesia. Ikrar ini dianggap sebagai kristalisasi semangat untuk menegaskan cita-cita berdirinya negara Indonesia.\n\n## Latar Belakang\n\nKejadian sejarah ini bermula dari gagasan penyelenggaraan Kongres Pemuda Kedua yang berasal dari Perhimpunan Pelajar Pelajar Indonesia (PPPI).\n\n## Makna Sumpah Pemuda\n\n1. Menyatukan perjuangan bangsa Indonesia\n2. Mendorong semangat juang pemuda\n3. Menumbuhkan kebanggaan sebagai bangsa Indonesia\n\nMari pelajari lebih lanjut bagaimana kita dapat mengimplementasikan semangat ini di era digital!');
+    setImageUrl('https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=600');
+    setIsGenerating(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,8 +96,18 @@ export default function CreateModulPage() {
               />
             </div>
 
-            <div className="flex justify-end pt-4">
-              <Button type="submit" className="bg-teacher hover:bg-teacher/90 text-white font-bold h-12 px-8">
+            <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4 items-center">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleGenerateAI}
+                disabled={isGenerating}
+                className="w-full sm:w-auto text-purple-600 border-purple-600 hover:bg-purple-50 h-12 px-6"
+              >
+                <Sparkles className={`mr-2 h-5 w-5 ${isGenerating ? 'animate-pulse' : ''}`} />
+                {isGenerating ? 'AI sedang menulis...' : 'Generate dengan AI'}
+              </Button>
+              <Button type="submit" className="w-full sm:w-auto bg-teacher hover:bg-teacher/90 text-white font-bold h-12 px-8">
                 <Save className="mr-2 h-5 w-5" />
                 Simpan Modul
               </Button>

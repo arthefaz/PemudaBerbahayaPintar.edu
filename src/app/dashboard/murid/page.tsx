@@ -72,25 +72,27 @@ export default function MuridDashboard() {
             { title: "Nilai-Nilai Pancasila", progress: 30, image: "https://images.unsplash.com/photo-1620063259695-1f9fbf49e9e8?auto=format&fit=crop&q=80&w=600" },
             { title: "Bela Negara di Era Digital", progress: 0, image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600" },
           ].map((modul, i) => (
-            <Card key={i} className="overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer">
-              <div className="h-40 overflow-hidden relative">
-                <img src={modul.image} alt={modul.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-              </div>
-              <CardHeader className="p-5 pb-0">
-                <CardTitle className="text-lg line-clamp-1">{modul.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-5">
-                <div className="flex justify-between items-center text-sm font-medium mb-2">
-                  <span className="text-muted-foreground">Progress</span>
-                  <span className="text-primary">{modul.progress}%</span>
+            <Link href={`/dashboard/murid/modul/${i + 1}`} key={i} className="block h-full">
+              <Card className="h-full overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer">
+                <div className="h-40 overflow-hidden relative">
+                  <img src={modul.image} alt={modul.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                 </div>
-                {/* Custom Progress Bar since we didn't install the component */}
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary transition-all duration-500" style={{ width: `${modul.progress}%` }} />
-                </div>
-              </CardContent>
-            </Card>
+                <CardHeader className="p-5 pb-0">
+                  <CardTitle className="text-lg line-clamp-1">{modul.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-5">
+                  <div className="flex justify-between items-center text-sm font-medium mb-2">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="text-primary">{modul.progress}%</span>
+                  </div>
+                  {/* Custom Progress Bar since we didn't install the component */}
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary transition-all duration-500" style={{ width: `${modul.progress}%` }} />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>
