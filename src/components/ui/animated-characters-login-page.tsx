@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff, Mail, Sparkles, Shield } from "lucide-react";
+import { Eye, EyeOff, Mail, Shield, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PupilProps {
@@ -16,6 +16,7 @@ interface PupilProps {
   pupilColor?: string;
   forceLookX?: number;
   forceLookY?: number;
+  isFlipped?: boolean;
 }
 
 const Pupil = ({ 
@@ -23,7 +24,8 @@ const Pupil = ({
   maxDistance = 5,
   pupilColor = "black",
   forceLookX,
-  forceLookY
+  forceLookY,
+  isFlipped = false
 }: PupilProps) => {
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
@@ -53,7 +55,9 @@ const Pupil = ({
     const pupilCenterX = pupil.left + pupil.width / 2;
     const pupilCenterY = pupil.top + pupil.height / 2;
 
-    const deltaX = mouseX - pupilCenterX;
+    let deltaX = mouseX - pupilCenterX;
+    if (isFlipped) deltaX = -deltaX;
+    
     const deltaY = mouseY - pupilCenterY;
     const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
 
@@ -90,6 +94,7 @@ interface EyeBallProps {
   isBlinking?: boolean;
   forceLookX?: number;
   forceLookY?: number;
+  isFlipped?: boolean;
 }
 
 const EyeBall = ({ 
@@ -100,7 +105,8 @@ const EyeBall = ({
   pupilColor = "black",
   isBlinking = false,
   forceLookX,
-  forceLookY
+  forceLookY,
+  isFlipped = false
 }: EyeBallProps) => {
   const [mouseX, setMouseX] = useState<number>(0);
   const [mouseY, setMouseY] = useState<number>(0);
@@ -130,7 +136,9 @@ const EyeBall = ({
     const eyeCenterX = eye.left + eye.width / 2;
     const eyeCenterY = eye.top + eye.height / 2;
 
-    const deltaX = mouseX - eyeCenterX;
+    let deltaX = mouseX - eyeCenterX;
+    if (isFlipped) deltaX = -deltaX;
+
     const deltaY = mouseY - eyeCenterY;
     const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
 
@@ -170,12 +178,13 @@ const EyeBall = ({
   );
 };
 
-export function AnimatedCharactersLoginPage() {
+export function AnimatedCharactersLoginPage({ mode = 'login' }: { mode?: 'login' | 'register' }) {
   const router = useRouter();
   const login = useStore(state => state.login);
 
   const [role, setRole] = useState<'murid' | 'guru'>('murid');
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -188,6 +197,8 @@ export function AnimatedCharactersLoginPage() {
   const [isLookingAtEachOther, setIsLookingAtEachOther] = useState(false);
   const [isPurplePeeking, setIsPurplePeeking] = useState(false);
   
+  const isFlipped = mode === 'register';
+
   const purpleRef = useRef<HTMLDivElement>(null);
   const blackRef = useRef<HTMLDivElement>(null);
   const yellowRef = useRef<HTMLDivElement>(null);
@@ -266,13 +277,15 @@ export function AnimatedCharactersLoginPage() {
   }, [password, showPassword, isPurplePeeking]);
 
   const calculatePosition = (ref: React.RefObject<HTMLDivElement | null>) => {
-    if (!ref.current) return { faceX: 0, faceY: 0, bodyRotation: 0 };
+    if (!ref.current) return { faceX: 0, faceY: 0, bodySkew: 0 };
 
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 3;
 
-    const deltaX = mouseX - centerX;
+    let deltaX = mouseX - centerX;
+    if (isFlipped) deltaX = -deltaX;
+
     const deltaY = mouseY - centerY;
 
     const faceX = Math.max(-15, Math.min(15, deltaX / 20));
@@ -295,12 +308,16 @@ export function AnimatedCharactersLoginPage() {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Authenticate using our JSON Zustand Store
-    const success = login(email, password, role);
-    if (success) {
-      router.push(`/dashboard/${role}`);
+    if (mode === 'login') {
+      const success = login(email, password, role);
+      if (success) {
+        router.push(`/dashboard/${role}`);
+      } else {
+        setError("Email, password, atau peran salah.");
+      }
     } else {
-      setError("Email, password, atau peran salah.");
+      // Dummy register behavior: just redirect to dashboard
+      router.push(`/dashboard/${role}`);
     }
     setIsLoading(false);
   };
@@ -308,7 +325,7 @@ export function AnimatedCharactersLoginPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left Content Section */}
-      <div className="relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-primary/90 via-primary to-primary/80 p-12 text-primary-foreground overflow-hidden">
+      <div className={`relative hidden lg:flex flex-col justify-between bg-gradient-to-br from-primary/90 via-primary to-primary/80 p-12 text-primary-foreground overflow-hidden ${isFlipped ? 'lg:order-2' : ''}`}>
         <div className="relative z-20">
           <div className="flex items-center gap-2 text-lg font-semibold">
             <div className="size-8 rounded-lg bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center">
@@ -320,7 +337,7 @@ export function AnimatedCharactersLoginPage() {
 
         <div className="relative z-20 flex items-end justify-center h-[500px]">
           {/* Cartoon Characters */}
-          <div className="relative" style={{ width: '550px', height: '400px' }}>
+          <div className="relative" style={{ width: '550px', height: '400px', transform: isFlipped ? 'scaleX(-1)' : 'none' }}>
             {/* Purple character */}
             <div 
               ref={purpleRef}
@@ -356,6 +373,7 @@ export function AnimatedCharactersLoginPage() {
                   isBlinking={isPurpleBlinking}
                   forceLookX={(password.length > 0 && showPassword) ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
                   forceLookY={(password.length > 0 && showPassword) ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
+                  isFlipped={isFlipped}
                 />
                 <EyeBall 
                   size={18} 
@@ -366,6 +384,7 @@ export function AnimatedCharactersLoginPage() {
                   isBlinking={isPurpleBlinking}
                   forceLookX={(password.length > 0 && showPassword) ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
                   forceLookY={(password.length > 0 && showPassword) ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
+                  isFlipped={isFlipped}
                 />
               </div>
             </div>
@@ -407,6 +426,7 @@ export function AnimatedCharactersLoginPage() {
                   isBlinking={isBlackBlinking}
                   forceLookX={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? 0 : undefined}
                   forceLookY={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? -4 : undefined}
+                  isFlipped={isFlipped}
                 />
                 <EyeBall 
                   size={16} 
@@ -417,6 +437,7 @@ export function AnimatedCharactersLoginPage() {
                   isBlinking={isBlackBlinking}
                   forceLookX={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? 0 : undefined}
                   forceLookY={(password.length > 0 && showPassword) ? -4 : isLookingAtEachOther ? -4 : undefined}
+                  isFlipped={isFlipped}
                 />
               </div>
             </div>
@@ -443,8 +464,8 @@ export function AnimatedCharactersLoginPage() {
                   top: (password.length > 0 && showPassword) ? `${85}px` : `${90 + (orangePos.faceY || 0)}px`,
                 }}
               >
-                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} />
-                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} />
+                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} isFlipped={isFlipped} />
+                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} isFlipped={isFlipped} />
               </div>
             </div>
 
@@ -470,8 +491,8 @@ export function AnimatedCharactersLoginPage() {
                   top: (password.length > 0 && showPassword) ? `${35}px` : `${40 + (yellowPos.faceY || 0)}px`,
                 }}
               >
-                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} />
-                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} />
+                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} isFlipped={isFlipped} />
+                <Pupil size={12} maxDistance={5} pupilColor="#2D2D2D" forceLookX={(password.length > 0 && showPassword) ? -5 : undefined} forceLookY={(password.length > 0 && showPassword) ? -4 : undefined} isFlipped={isFlipped} />
               </div>
               <div 
                 className="absolute w-20 h-[4px] bg-[#2D2D2D] rounded-full transition-all duration-200 ease-out"
@@ -493,12 +514,16 @@ export function AnimatedCharactersLoginPage() {
         <div className="absolute bottom-1/4 left-1/4 size-96 bg-primary-foreground/5 rounded-full blur-3xl" />
       </div>
 
-      {/* Right Login Section */}
-      <div className="flex items-center justify-center p-8 bg-background">
+      {/* Right Login/Register Section */}
+      <div className={`flex items-center justify-center p-8 bg-background ${isFlipped ? 'lg:order-1' : ''}`}>
         <div className="w-full max-w-[420px]">
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Selamat Datang Kembali!</h1>
-            <p className="text-muted-foreground text-sm">Masuk untuk melanjutkan pembelajaran</p>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
+              {mode === 'login' ? 'Selamat Datang Kembali!' : 'Mulai Perjalananmu'}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {mode === 'login' ? 'Masuk untuk melanjutkan pembelajaran' : 'Buat akun untuk mengakses modul bela negara.'}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -536,20 +561,43 @@ export function AnimatedCharactersLoginPage() {
               </div>
             )}
 
+            {mode === 'register' && (
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">Nama Lengkap</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Budi Santoso"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onFocus={() => setIsTyping(true)}
+                    onBlur={() => setIsTyping(false)}
+                    required
+                    className="h-12 pl-10 bg-background border-border/60 focus:border-primary"
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={role === 'murid' ? "budi@murid.com" : "wahyu@guru.com"}
-                value={email}
-                autoComplete="off"
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setIsTyping(true)}
-                onBlur={() => setIsTyping(false)}
-                required
-                className="h-12 bg-background border-border/60 focus:border-primary"
-              />
+              <div className="relative">
+                {mode === 'register' && <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />}
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={role === 'murid' ? "budi@murid.com" : "wahyu@guru.com"}
+                  value={email}
+                  autoComplete="off"
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setIsTyping(true)}
+                  onBlur={() => setIsTyping(false)}
+                  required
+                  className={cn("h-12 bg-background border-border/60 focus:border-primary", mode === 'register' ? 'pl-10' : '')}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -578,36 +626,54 @@ export function AnimatedCharactersLoginPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
-                  Ingat saya
-                </Label>
+            {mode === 'login' && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" />
+                  <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+                    Ingat saya
+                  </Label>
+                </div>
+                <a href="#" className="text-sm text-primary hover:underline font-medium">
+                  Lupa password?
+                </a>
               </div>
-              <a href="#" className="text-sm text-primary hover:underline font-medium">
-                Lupa password?
-              </a>
-            </div>
+            )}
 
             <Button 
               type="submit" 
               className={cn(
-                "w-full h-12 text-base font-bold text-white",
+                "w-full h-12 text-base font-bold text-white mt-2",
                 role === 'guru' ? "bg-teacher hover:bg-teacher/90" : "bg-primary hover:bg-primary-hover"
               )} 
               size="lg" 
               disabled={isLoading}
             >
-              {isLoading ? "Memproses..." : "Masuk"}
+              {isLoading 
+                ? "Memproses..." 
+                : mode === 'login' 
+                  ? "Masuk" 
+                  : `Daftar sebagai ${role === 'murid' ? 'Murid' : 'Guru'}`
+              }
             </Button>
           </form>
 
           <div className="text-center text-sm text-muted-foreground mt-8">
-            Belum punya akun?{" "}
-            <a href="/register" className="text-foreground font-medium hover:underline">
-              Daftar Sekarang
-            </a>
+            {mode === 'login' ? (
+              <>
+                Belum punya akun?{" "}
+                <a href="/register" className="text-foreground font-medium hover:underline">
+                  Daftar Sekarang
+                </a>
+              </>
+            ) : (
+              <>
+                Sudah punya akun?{" "}
+                <a href="/login" className="text-primary font-semibold hover:underline">
+                  Masuk di sini
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>

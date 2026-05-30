@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CustomKanban } from '@/components/ui/custom-kanban';
+import Link from 'next/link';
 
 export default function MuridDashboard() {
   return (
@@ -25,10 +26,12 @@ export default function MuridDashboard() {
             Siap untuk memperdalam wawasan kebangsaanmu hari ini? Lanjutkan modul terakhirmu untuk menyelesaikan target mingguan.
           </p>
           <div className="mt-8 flex items-center gap-4">
-            <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold">
-              <PlayCircle className="mr-2 h-5 w-5" />
-              Lanjutkan Modul
-            </Button>
+            <Link href="/dashboard/murid/modul/1">
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold">
+                <PlayCircle className="mr-2 h-5 w-5" />
+                Lanjutkan Modul
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

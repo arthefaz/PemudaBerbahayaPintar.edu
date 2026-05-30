@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CustomKanban } from '@/components/ui/custom-kanban';
+import Link from 'next/link';
 import { IntegrationShowcase, type Integration } from '@/components/ui/integration-showcase';
 
 const integrationsData: Integration[] = [
@@ -49,10 +50,12 @@ export default function GuruDashboard() {
             Pantau perkembangan siswa, periksa nilai kuis, dan kelola modul pembelajaran Tema 4.
           </p>
           <div className="mt-8 flex items-center gap-4">
-            <Button size="lg" className="bg-white text-teacher hover:bg-white/90 font-bold">
-              <FileText className="mr-2 h-5 w-5" />
-              Buat Modul Baru
-            </Button>
+            <Link href="/dashboard/guru/modul/create">
+              <Button size="lg" className="bg-white text-teacher hover:bg-white/90 font-bold">
+                <FileText className="mr-2 h-5 w-5" />
+                Buat Modul Baru
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
