@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Shield, BookOpen, Trophy, ArrowRight, BrainCircuit, ShieldCheck, Users, Briefcase, Link as LinkIcon, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HeroSection, { type ActionProps } from '@/components/ui/hero-section-9';
+import { LeaderboardCard } from '@/components/ui/leaderboard-card';
 
 export default function LandingPage() {
   const heroData = {
@@ -142,6 +143,47 @@ export default function LandingPage() {
               <p className="text-muted-foreground">Fitur dashboard guru yang memudahkan pemantauan progress setiap murid secara real-time.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Leaderboard Preview Section */}
+      <section id="leaderboard" className="py-24 bg-muted/20 border-y">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 uppercase">Pemuda Paling Berbahaya</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Raih peringkat teratas dan tunjukkan dedikasimu pada bangsa.</p>
+          </div>
+          <LeaderboardCard
+            title="Top 3 Nasional"
+            fromDate={new Date(new Date().setDate(new Date().getDate() - 7))}
+            toDate={new Date()}
+            podiumRankings={[
+              { userId: "u-1", userName: "Budi Santoso", rank: 1, value: 25400 },
+              { userId: "u-2", userName: "Siti Aminah", rank: 2, value: 21200 },
+              { userId: "u-3", userName: "Andi Saputra", rank: 3, value: 18500 },
+            ]}
+            rankings={[
+              { userId: "u-1", rank: 1, userName: "Budi Santoso", byline: "Level 25", value: 25400, displayed: true },
+              { userId: "u-2", rank: 2, userName: "Siti Aminah", byline: "Level 21", value: 21200, displayed: true },
+              { userId: "u-3", rank: 3, userName: "Andi Saputra", byline: "Level 18", value: 18500, displayed: true },
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-24">
+        <div className="container mx-auto px-4 text-center max-w-3xl">
+          <Shield className="h-16 w-16 text-primary mx-auto mb-6" />
+          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6 uppercase">Tentang Kami</h2>
+          <p className="text-lg text-muted-foreground font-medium mb-8">
+            PemudaBerbahayaPintar diinisiasi dengan satu visi utama: menanamkan nilai-nilai luhur Wawasan Kebangsaan dan semangat Bela Negara kepada generasi muda Indonesia melalui cara yang interaktif, modern, dan tidak membosankan. 
+            <br /><br />
+            Kami percaya bahwa pemuda yang "berbahaya" adalah mereka yang tidak hanya cerdas secara akademis, tetapi juga memiliki karakter yang kuat, cinta tanah air, dan siap menjadi agen perubahan positif bagi bangsa.
+          </p>
+          <Button variant="outline" className="font-bold border-2" size="lg">
+            Hubungi Kami
+          </Button>
         </div>
       </section>
 
