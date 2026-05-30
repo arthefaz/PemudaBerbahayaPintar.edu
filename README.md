@@ -1,6 +1,6 @@
 # PemudaBerbahayaPintar 🇮🇩
 
-**PemudaBerbahayaPintar** adalah platform pembelajaran edukasi interaktif berbasis web yang difokuskan pada Tema 4 (Wawasan Kebangsaan & Bela Negara) untuk pemuda Indonesia. Platform ini dirancang agar tidak membosankan dengan memanfaatkan antarmuka modern, interaksi dinamis, *gamification* (*leaderboard*, poin), serta sistem pelacakan progres (papan Kanban). 
+**PemudaBerbahayaPintar** adalah platform pembelajaran edukasi interaktif berbasis web yang difokuskan pada SDG 4 (Quality Education) untuk pemuda Indonesia. Platform ini dirancang agar tidak membosankan dengan memanfaatkan antarmuka modern, interaksi dinamis, *gamification* (*leaderboard*, poin), serta sistem pelacakan progres (papan Kanban). 
 
 > *Bukan sekadar pintar. Berbahaya.*
 
